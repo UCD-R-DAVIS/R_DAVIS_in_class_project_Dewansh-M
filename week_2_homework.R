@@ -22,4 +22,4 @@ plus10
 final <- plus10[c(TRUE, FALSE)]
 final
 
-#is there a way to find a to find alternate values in a set?
+#is there another way to find a to find alternate values in a set?
