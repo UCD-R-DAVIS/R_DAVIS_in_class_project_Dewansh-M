@@ -70,7 +70,7 @@ assigned_weight <- data.frame(weight_chr, weight_num)
 
 #Done, but the way I wanted to do this was to look assign vaulues from one vector to the other, because that would be easiest to do with longer datasets
 
-Achieved!
+#Achieved!
   
 #--------------------------------
 
@@ -345,7 +345,7 @@ piping2 <- surveys %>%
   filter(weight <5) %>%
   select(plot_id, record_id, species_id)
 
-#see, cleaner, and easier to understand
+#see: cleaner, and easier to understand
 
 #IMP mutate: used to create new columns of data in our data
 
@@ -368,4 +368,82 @@ surveys1 <- surveys %>%
          weight_kg2 = weight_kg*2)
 
 str(surveys1)  
+head(surveys1)
 
+#group by and summarize used together often. group by allows us to perfom specific commands on a set of variables 
+
+surveys %>%
+  group_by(sex) %>%
+  mutate(mean_weight <- mean(weight))
+
+surveys3 <- surveys %>%
+  filter(!is.na(weight)) %>%
+  group_by(sex) %>%
+  summarize(mean_weight <- mean(weight))
+
+#unclear when to use mutate and when to use mutate and summarize
+
+#the arrange function can help in ordering data in ascending or descending order
+
+surveys3 <- surveys %>%
+  group_by(sex, species_id) %>%
+  summarize(mean_weight = mean(weight)) %>%
+  arrange(mean_weight)
+
+#to order it in descending order, add a minus before
+
+
+#---------------------------------------------------
+
+#week 5 conditional statements
+
+library(tidyverse)
+
+surveys <- read_csv("data/portal_data_joined.csv")
+
+summary 
+
+#if a statement is true, then execute x, if it is false, then execute y
+
+#To do this, we define the logic: if hindfoot length is less than the mean of 29.29, assign “small” to this new variable, otherwise, assign “big” to this new variable. 
+
+surveys$hindfoot_cat <- ifelse(surveys$hindfoot_length < 29.29, "small", "big")
+head(surveys$hindfoot_cat)
+
+#The tidyverse provides a way to integrate conditional statements by combining mutate() with the conditional function: case_when(). This function uses a series of two-sided formulas where the left-hand side determines describes the condition, and the right supplies the result. The final condition should always be TRUE, meaning that when the previous conditions have not been met, assign the last value. Using this function we can re-write the hindfoot_cat variable using the tidyverse.
+
+surveys %>% 
+  mutate(hindfoot_cat = case_when(hindfoot_length > 29.29 ~ "big",TRUE ~ "small")) %>% 
+  select(hindfoot_length, hindfoot_cat) %>% 
+  head()
+
+
+surveys %>% 
+  mutate(hindfoot_cat = case_when(
+    hindfoot_length > 29.29 ~ "big",
+    is.na(hindfoot_length) ~ NA_character_,
+    TRUE ~ "small"
+  )) %>% 
+  select(hindfoot_length, hindfoot_cat) %>% 
+  head()
+
+#what we're doing here is basically saying that if something is NA, call it NA, and everything else is going to be small
+
+#pivoting
+
+#pivot_longer lengthens data by increasing the number of rows and decreasing the number of columns. This function takes 4 main arguments:
+  
+#the data
+#cols, the column(s) to be pivoted (or to ignore)
+#names_to the name of the new column you’ll create to put the column names in
+#values_to the name of the new column to put the column values in
+
+
+
+#inner_join will return all the rows from Table A that has matching values in Table B, and all the columns from both Table A and B
+
+#left_join returns all the rows from Table A with all the columns from both A and B. Rows in Table A that have no match in Table B will return NAs
+
+#right_join returns all the rows from Table B and all the columns from table A and B. Rows in Table B that have no match in Table A will return NAs.
+
+#full_join returns all the rows and all the columns from Table A and Table B. Where there are no matching values, returns NA for the one that is missing.
